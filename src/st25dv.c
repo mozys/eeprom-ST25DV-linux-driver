@@ -213,7 +213,7 @@ static ssize_t st25dv_send_pwd_req(struct file *filp, struct kobject *kobj,
 
 	cmd = bin_attr == &st25dv_p_pwd_attr ? CMD_PRESENT_PWD : CMD_WRITE_PWD;
 	if(count != PWD_SIZE){
-		printk(KERN_WARNING "st25dv: send pwd cmd fail count=%d.\n", count);
+		printk(KERN_WARNING "st25dv: send pwd cmd fail count=%zd.\n", count);
 		return count;
 	}
 	nack = 0;
@@ -313,7 +313,7 @@ static int st25dv_detect(struct i2c_client *client, struct i2c_board_info *info)
 		printk(KERN_WARNING "not st25dv eeprom.\n");
 		return -ENODEV;
 	}
-	if(!i2c_new_dummy(client->adapter, SYS_ADDR)){
+	if(!i2c_new_dummy_device(client->adapter, SYS_ADDR)){
 		printk(KERN_WARNING "not st25dv eeprom.\n");
 		return -ENODEV;
 	}
@@ -340,7 +340,7 @@ static int st25dv_probe(struct i2c_client *client,
 	struct i2c_client *client_sys_area;//i2c_client of the system area
 
 	/*dummy client for the system area at addr 0x57*/
-	client_sys_area = i2c_new_dummy(client->adapter, SYS_ADDR);
+	client_sys_area = i2c_new_dummy_device(client->adapter, SYS_ADDR);
 	if(!client_sys_area){
 		printk(KERN_WARNING "st25dv sys eeprom not detected.\n");
 		return -ENODEV;
@@ -462,7 +462,7 @@ err_mem:
 	return -ENOMEM;
 }
 
-static int st25dv_remove(struct i2c_client *client)
+static void st25dv_remove(struct i2c_client *client)
 {
 	struct st25dv_data *data = i2c_get_clientdata(client);
 	struct st25dv_data *tmp_data2, *tmp_data;
@@ -494,8 +494,6 @@ static int st25dv_remove(struct i2c_client *client)
 	kfree(data->update_lock);
 	/*unregister dummy device*/
 	i2c_unregister_device(client_sys_area);
-
-	return 0;
 }
 
 static const struct i2c_device_id st25dv_id[] = {

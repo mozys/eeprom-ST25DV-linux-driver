@@ -3,6 +3,7 @@
 
 obj-m += st25dv.o
 SRC := $(shell pwd)
+KERNEL_SRC := /lib/modules/$(shell uname -r)/build/
 
 all:
 	$(MAKE) -C $(KERNEL_SRC) M=$(SRC) modules
