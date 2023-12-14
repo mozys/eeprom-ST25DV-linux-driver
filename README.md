@@ -68,9 +68,9 @@ build the device tree overlay(/dts/overlay):
 
 	make
 
-copy i2c-st25dv-overlay.dtb in /boot/overlay:
+copy i2c-st25dv.dtbo in /boot/overlay:
 
-	sudo cp i2c-st25dv-overlay.dtb /boot/overlays/
+	sudo cp i2c-st25dv.dtbo /boot/overlays/
 
 add the	DeviceTree overlay to /boot/config.txt:	
 
