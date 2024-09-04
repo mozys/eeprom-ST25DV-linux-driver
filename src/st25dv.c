@@ -328,9 +328,10 @@ static int st25dv_detect(struct i2c_client *client, struct i2c_board_info *info)
 	return 0;
 }
 
-static int st25dv_probe(struct i2c_client *client,
-			const struct i2c_device_id *id)
+static int st25dv_probe(struct i2c_client *client)
 {
+	const struct i2c_device_id *id = i2c_client_get_device_id(client);
+
 	int status;
 	struct mutex *st25dv_lock;
 	struct st25dv_data *data;
