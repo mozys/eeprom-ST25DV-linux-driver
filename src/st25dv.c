@@ -326,11 +326,7 @@ static const struct bin_attribute st25dv_p_pwd_attr = {
 static int st25dv_detect(struct i2c_client *client, struct i2c_board_info *info)
 {
 	struct i2c_adapter *adapter = client->adapter;
-
-	if (!(adapter->class & I2C_CLASS_SPD) && (client->addr != USER_ADDR)){
-		printk(KERN_WARNING "not st25dv eeprom.\n");
-		return -ENODEV;
-	}
+	
 	if(!i2c_new_dummy_device(client->adapter, SYS_ADDR)){
 		printk(KERN_WARNING "not st25dv eeprom.\n");
 		return -ENODEV;
@@ -341,7 +337,7 @@ static int st25dv_detect(struct i2c_client *client, struct i2c_board_info *info)
 		return -ENODEV;
 	}
 	printk(KERN_WARNING "st25dv eeprom detect.\n");
-	strlcpy(info->type, "st25dv", I2C_NAME_SIZE);
+	strscpy(info->type, "st25dv", I2C_NAME_SIZE);
 
 	return 0;
 }
@@ -522,6 +518,18 @@ static const struct i2c_device_id st25dv_id[] = {
 	{ "st25dv64k", 3 },
 	{ }
 };
+MODULE_DEVICE_TABLE(i2c, st25dv_id);
+
+#ifdef CONFIG_OF
+static const struct of_device_id st25dv_of_match[] = {
+    { .compatible = "st25dv,st25dv" }, // Matches the compatible string in your device tree
+    { .compatible = "st25dv,st25dv04k" },
+	{ .compatible = "st25dv,st25dv16k" },
+	{ .compatible = "st25dv,st25dv64k" },
+	{ }
+};
+MODULE_DEVICE_TABLE(of, st25dv_of_match);
+#endif
 
 static struct i2c_driver st25dv_driver = {
 	.driver = {
@@ -531,7 +539,6 @@ static struct i2c_driver st25dv_driver = {
 	.remove		= st25dv_remove,
 	.id_table	= st25dv_id,
 
-	.class		= I2C_CLASS_DDC | I2C_CLASS_SPD,
 	.detect		= st25dv_detect,
 	.address_list	= normal_i2c,
 };
